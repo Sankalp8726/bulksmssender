@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk SMS Sender (Private)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f4f4; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px gray; }
+        textarea, input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid gray; }
+        button { background-color: #28a745; color: white; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <div id="loginBox" class="container">
+        <h2>Enter Password</h2>
+        <input type="password" id="passwordInput" placeholder="Enter Password">
+        <button onclick="checkPassword()">Login</button>
+    </div>
+
+    <div id="smsContainer" class="container" style="display: none;">
+        <h2>Bulk SMS Sender</h2>
+        <label>Enter Phone Numbers (comma-separated):</label><br>
+        <textarea id="phoneNumbers" rows="3" placeholder="e.g., 9876543210, 8765432109"></textarea><br>
+        
+        <label>Enter Message:</label><br>
+        <textarea id="message" rows="4" placeholder="Type your message here..."></textarea><br>
+        
+        <button onclick="sendBulkSMS()">Send SMS</button>
+    </div>
+
+    <script>
+        function checkPassword() {
+            let password = document.getElementById("passwordInput").value;
+            if (password === "mysecret123") { // Change this to your own password
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("smsContainer").style.display = "block";
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        function sendBulkSMS() {
+            let numbers = document.getElementById("phoneNumbers").value;
+            let message = document.getElementById("message").value;
+            
+            if (numbers.trim() === "" || message.trim() === "") {
+                alert("Please enter phone numbers and a message.");
+                return;
+            }
+
+            let phoneArray = numbers.split(",");
+            let formattedNumbers = phoneArray.map(num => num.trim()).join(";");
+
+            let smsUri = "sms:" + formattedNumbers + "?body=" + encodeURIComponent(message);
+
+            window.location.href = smsUri;
+        }
+    </script>
+
+</body>
+</html>
