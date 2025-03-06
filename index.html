@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk SMS Sender (Private)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f4f4; }
         .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px gray; }
@@ -22,6 +23,10 @@
 
     <div id="smsContainer" class="container" style="display: none;">
         <h2>Bulk SMS Sender</h2>
+
+        <label>Select Excel File:</label><br>
+        <input type="file" id="excelFile" accept=".xlsx" onchange="importExcel()"><br>
+
         <label>Enter Phone Numbers (comma-separated):</label><br>
         <textarea id="phoneNumbers" rows="3" placeholder="e.g., 9876543210, 8765432109"></textarea><br>
         
@@ -40,6 +45,24 @@
             } else {
                 alert("Incorrect password!");
             }
+        }
+
+        function importExcel() {
+            let fileInput = document.getElementById("excelFile");
+            let file = fileInput.files[0];
+            let reader = new FileReader();
+
+            reader.onload = function (event) {
+                let data = new Uint8Array(event.target.result);
+                let workbook = XLSX.read(data, { type: 'array' });
+                let firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                let rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                let phoneNumbers = rows.map(row => row[0]).filter(num => num).join(",");
+                document.getElementById("phoneNumbers").value = phoneNumbers;
+            };
+
+            reader.readAsArrayBuffer(file);
         }
 
         function sendBulkSMS() {
